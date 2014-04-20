@@ -24,12 +24,15 @@ def plot(X, teachers, weights):
             blue_c.append(x[0]) 
     red_c = np.array(red_c)
     blue_c = np.array(blue_c)
-    
+   
+
     pyplot.subplot(211)
+    pyplot.title("Training data")
     pyplot.plot(red_t.T[0], red_t.T[1], 'ro', 
                 blue_t.T[0], blue_t.T[1], 'bs')
     
     pyplot.subplot(212)
+    pyplot.title("Classified data")
     pyplot.plot(red_c.T[0], red_c.T[1], 'ro', 
                 blue_c.T[0], blue_c.T[1], 'bs')
     pyplot.show()

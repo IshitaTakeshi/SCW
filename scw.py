@@ -6,7 +6,7 @@ class SCW(object):
         self.weights = np.zeros(ndim)
         self.covariance = np.ones(ndim)
         self.C = np.float64(C)
-        self.cdf_params = self.calc_cdf_params(ETA)
+        self.cdf_values = self.calc_cdf_values(ETA)
     
     def sgn(self, x):
         t = np.dot(self.weights, x)
@@ -23,7 +23,7 @@ class SCW(object):
             return 0
         return 1-t
 
-    def calc_cdf_params(self, ETA):
+    def calc_cdf_values(self, ETA):
         phi = norm.cdf(ETA)
         psi = 1 + np.power(phi, 2)/2
         zeta = 1 + np.power(phi, 2)
@@ -43,7 +43,7 @@ class SCW(object):
         alpha = self.calc_alpha(x, teacher)
         v = self.calc_confidence(x, teacher)
         m = self.calc_margin(x, teacher) 
-        phi, psi, zeta = self.cdf_params
+        phi, psi, zeta = self.cdf_values
 
         j = -alpha * v * phi
         k = np.sqrt(np.power(alpha*v*phi, 2) + 4*v)
@@ -75,7 +75,7 @@ class SCW1(SCW):
     def calc_alpha(self, x, teacher):
         v = self.calc_confidence(x, teacher)
         m = self.calc_margin(x, teacher) 
-        phi, psi, zeta = self.cdf_params
+        phi, psi, zeta = self.cdf_values
         
         j = np.power(m, 2) * np.power(phi, 4) / 4
         k = v * zeta * np.power(phi, 2)
@@ -87,7 +87,7 @@ class SCW2(SCW):
     def calc_alpha(self, x, teacher):
         v = self.calc_confidence(x, teacher)
         m = self.calc_margin(x, teacher) 
-        phi, psi, zeta = self.cdf_params
+        phi, psi, zeta = self.cdf_values
         
         n = v+1/self.C
         a = np.power(phi*m*v, 2)

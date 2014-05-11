@@ -1,10 +1,14 @@
+import math
+
 import numpy as np
 from scipy.stats import norm
 
-class SCW(object):
-    def __init__(self, ndim, C=1.0, ETA=1.0):
-        self.weights = np.zeros(ndim)
-        self.covariance = np.ones(ndim)
+__all__ = ['SCW1', 'SCW2']
+
+class BaseSCW(object):
+    def __init__(self, N_DIM, C, ETA):
+        self.weights = np.zeros(N_DIM)
+        self.covariance = np.ones(N_DIM)
         self.C = np.float64(C)
         self.cdf_values = self.calc_cdf_values(ETA)
     
@@ -25,8 +29,8 @@ class SCW(object):
 
     def calc_cdf_values(self, ETA):
         phi = norm.cdf(ETA)
-        psi = 1 + np.power(phi, 2)/2
-        zeta = 1 + np.power(phi, 2)
+        psi = 1 + pow(phi, 2)/2
+        zeta = 1 + pow(phi, 2)
         return (phi, psi, zeta)
 
     def calc_confidence(self, x, teacher):
@@ -46,9 +50,9 @@ class SCW(object):
         phi, psi, zeta = self.cdf_values
 
         j = -alpha * v * phi
-        k = np.sqrt(np.power(alpha*v*phi, 2) + 4*v)
-        u = np.power(j+k, 2) / 4
-        return (alpha * phi) / (np.sqrt(u) + v*alpha*phi)
+        k = math.sqrt(pow(alpha*v*phi, 2) + 4*v)
+        u = pow(j+k, 2) / 4
+        return (alpha * phi) / (math.sqrt(u) + v*alpha*phi)
 
     def update_covariance(self, x, teacher):
         beta = self.calc_beta(x, teacher)
@@ -68,33 +72,53 @@ class SCW(object):
     def train(self, X, teachers):
         for x, teacher in zip(X, teachers):
             self.update(x, teacher)
+
+    def fit(self, X, teachers, n_jobs=1):
+        for i in range(n_jobs):
+            self.train(X, teachers)
         return self.weights, self.covariance
 
+    def weighted(self, X):
+        ws = []
+        for x in X:
+            w = np.dot(x, self.weights)
+            ws.append(w)
+        return np.array(ws)
+    
+    def predict(self, X):
+        labels = []
+        for w in self.weighted(X):
+            if(w > 0):
+                labels.append(1)
+            else:
+                labels.append(-1)
+        return np.array(labels)
 
-class SCW1(SCW):
+
+class SCW1(BaseSCW):
     def calc_alpha(self, x, teacher):
         v = self.calc_confidence(x, teacher)
         m = self.calc_margin(x, teacher) 
         phi, psi, zeta = self.cdf_values
         
-        j = np.power(m, 2) * np.power(phi, 4) / 4
-        k = v * zeta * np.power(phi, 2)
-        t = (-m*psi + np.sqrt(j+k)) / (v*zeta)
+        j = pow(m, 2) * pow(phi, 4) / 4
+        k = v * zeta * pow(phi, 2)
+        t = (-m*psi + math.sqrt(j+k)) / (v*zeta)
         return min(self.C, max(0, t))
 
 
-class SCW2(SCW):
+class SCW2(BaseSCW):
     def calc_alpha(self, x, teacher):
         v = self.calc_confidence(x, teacher)
         m = self.calc_margin(x, teacher) 
         phi, psi, zeta = self.cdf_values
         
         n = v+1/self.C
-        a = np.power(phi*m*v, 2)
-        b = 4*n*v * (n+v*np.power(phi, 2))
-        gamma = phi * np.sqrt(a+b)
+        a = pow(phi*m*v, 2)
+        b = 4*n*v * (n+v*pow(phi, 2))
+        gamma = phi * math.sqrt(a+b)
         
-        c = -(2*m*n + m*v*np.power(phi, 2))
-        d = np.power(n, 2) + n*v*np.power(phi, 2)
+        c = -(2*m*n + m*v*pow(phi, 2))
+        d = pow(n, 2) + n*v*pow(phi, 2)
         t = (c+gamma)/(2*d)
         return max(0, t)

@@ -65,12 +65,12 @@ if(__name__ == '__main__'):
     X, t = data.get()
     
     scw = scw.SCW2(len(X[0]), C=10.0, ETA=1.0)
-    weights, covariance = scw.train(X, t)
+    weights, covariance = scw.fit(X, t)
     print("weights:{}".format(weights))
     plot(X, t, weights)
 
     data.add(n=[[-1, 3], [1, -4]])
     X, t = data.get()
-    weights, covariance = scw.train(X, t)
+    weights, covariance = scw.fit(X, t)
     print("weights:{}".format(weights))
     plot(X, t, weights)

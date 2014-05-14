@@ -14,12 +14,7 @@ class BaseSCW(object):
     
     def sgn(self, x):
         t = np.dot(self.weights, x)
-        if(t > 0):
-            return 1
-        if(t == 0):
-            return 0
-        if(t < 0):
-            return -1
+        return np.sign(t)
 
     def loss(self, x, teacher):
         t = teacher*np.dot(self.weights, x)

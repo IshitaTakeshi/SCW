@@ -5,6 +5,7 @@ from scipy.stats import norm
 
 __all__ = ['SCW1', 'SCW2']
 
+
 class BaseSCW(object):
     def __init__(self, N_DIM, C, ETA):
         self.weights = np.zeros(N_DIM)
@@ -74,16 +75,16 @@ class BaseSCW(object):
         return self.weights, self.covariance
 
     def weighted(self, X):
-        ws = []
+        rs = []
         for x in X:
-            w = np.dot(x, self.weights)
-            ws.append(w)
-        return np.array(ws)
+            r = np.dot(x, self.weights)
+            rs.append(r)
+        return np.array(rs)
     
     def predict(self, X):
         labels = []
-        for w in self.weighted(X):
-            if(w > 0):
+        for r in self.weighted(X):
+            if(r > 0):
                 labels.append(1)
             else:
                 labels.append(-1)

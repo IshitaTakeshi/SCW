@@ -30,5 +30,5 @@ weights, covariance = scw.fit(training_data, teachers)
 results = scw.perdict(test_data)
 ```
 
-In this example, `teachers` is 1-dimensional and `training_data` and `test_data` are 2-dimensional array.
+`teachers` is 1-dimensional and `training_data` and `test_data` are 2-dimensional array.
 

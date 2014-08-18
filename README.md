@@ -1,7 +1,7 @@
 #Exact Soft Confidence-Weighted Learning
 
 ##The explanation of the algorithm
-This is an online supervised learning algorithm.
+This is an online supervised learning algorithm.  
 This learning method enjoys all the four salient properties:
 
 * Large margin training

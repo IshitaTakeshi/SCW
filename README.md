@@ -1,8 +1,7 @@
 #Exact Soft Confidence-Weighted Learning
-_ _ _
 
 ##The explanation of the algorithm
-This is an online supervised learning algorithm.
+This is an online supervised learning algorithm.  
 This learning method enjoys all the four salient properties:
 
 * Large margin training
@@ -25,10 +24,11 @@ in the code. C and ETA are hyperparameters.
 
 ```
 from scw import SCW1, SCW2
+
 scw = SCW1(len(X[0]), C=1.0, ETA=1.0)
 weights, covariance = scw.fit(training_data, teachers)
 results = scw.perdict(test_data)
 ```
 
-In this example, `teachers` is 1-dimensional and `training_data` and `test_data` are 2-dimensional array.
+`teachers` is 1-dimensional and `training_data` and `test_data` are 2-dimensional array.
 

@@ -1,5 +1,4 @@
 #Exact Soft Confidence-Weighted Learning
-_ _ _
 
 ##The explanation of the algorithm
 This is an online supervised learning algorithm.

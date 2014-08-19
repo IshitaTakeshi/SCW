@@ -1,76 +1,49 @@
+from __future__ import division
+
+import time
+
 import numpy as np
-
-import scw
-
+from sklearn.datasets import load_digits, make_classification
+from sklearn.svm import LinearSVC
 from matplotlib import pyplot
 
-def plot(X, teachers, weights):
-    red_t = []
-    blue_t = []
-    for x, teacher in zip(X, teachers):
-        if(teacher > 0.):
-            red_t.append(x)
-        else:
-            blue_t.append(x)
-    red_t = np.array(red_t)
-    blue_t = np.array(blue_t)
-    
-    red_c = []
-    blue_c = []
-    for x in zip(X):
-        if(np.dot(x, weights) > 0.):
-            red_c.append(x[0])
-        else:
-            blue_c.append(x[0]) 
-    red_c = np.array(red_c)
-    blue_c = np.array(blue_c)
-   
-
-    pyplot.subplot(211)
-    pyplot.title("Training data")
-    pyplot.plot(red_t.T[0], red_t.T[1], 'ro', 
-                blue_t.T[0], blue_t.T[1], 'bs')
-    
-    pyplot.subplot(212)
-    pyplot.title("Classified data")
-    pyplot.plot(red_c.T[0], red_c.T[1], 'ro', 
-                blue_c.T[0], blue_c.T[1], 'bs')
-    pyplot.show()
+from scw import SCW1
 
 
-class Data(object):
-    def __init__(self):
-        self.X = []
-        self.t = []
+def generate_dataset():
+    digits = load_digits(2)
 
-    def add(self, p=None, n=None):
-        if(p is not None):
-            self.X += p
-            self.t += [1] * len(p)
+    classes = np.unique(digits.target)
+    y = []
+    for target in digits.target:
+        if(target == classes[0]):
+            y.append(-1)
+        if(target == classes[1]):
+            y.append(1)
+    y = np.array(y)
 
-        if(n is not None):
-            self.X += n
-            self.t += [-1] * len(n)
-        
-    def get(self):
-        return np.array(self.X), np.array(self.t)
+    return digits.data, y
 
 
-if(__name__ == '__main__'):
-    N = 20
+def calc_accuracy(resutls, answers):
+    n_correct_answers = 0
+    for result, answer in zip(results, answers):
+        if(result == answer):
+            n_correct_answers += 1
+    accuracy = n_correct_answers/len(results)
+    return accuracy
 
-    data = Data() 
-    data.add(p=[[0, 1], [4, 4], [1, 2]], 
-             n=[[-2, 1], [0, -1], [-1, 0], [2, -4]])
-    X, t = data.get()
-    
-    scw = scw.SCW2(len(X[0]), C=10.0, ETA=1.0)
-    weights, covariance = scw.fit(X, t)
-    print("weights:{}".format(weights))
-    plot(X, t, weights)
 
-    data.add(n=[[-1, 3], [1, -4]])
-    X, t = data.get()
-    weights, covariance = scw.fit(X, t)
-    print("weights:{}".format(weights))
-    plot(X, t, weights)
+X, y = generate_dataset()
+
+N = len(X)*0.8
+training, test = X[:N], X[N:]
+labels, answers = y[:N], y[N:]
+
+scw = SCW1(len(X[0]), C=1.0, ETA=1.0)
+t1 = time.time()
+scw.fit(training, labels)
+t2 = time.time()
+results = scw.predict(test)
+accuracy = calc_accuracy(results, answers)
+print("SCW    time:{:3.6f}    accuracy:{:1.3f}".format(t2-t1, accuracy))

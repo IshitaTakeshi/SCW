@@ -31,4 +31,3 @@ results = scw.perdict(test_data)
 ```
 
 `teachers` is 1-dimensional and `training_data` and `test_data` are 2-dimensional array.
-

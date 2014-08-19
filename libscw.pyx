@@ -9,13 +9,13 @@ ctypedef np.float64_t FLOAT_T
 ctypedef np.int8_t INT_T
 
 
-class BaseSCW(object): 
+class BaseSCW(object):
     def __init__(self, INT_T N_DIM, FLOAT_T C, FLOAT_T ETA):
         self.weights = np.zeros(N_DIM)
         self.covariance = np.ones(N_DIM)
         self.C = np.float64(C)
         self.cdf_values = self.calc_cdf_values(ETA)
-    
+
     def sgn(self, np.ndarray[np.float64_t, ndim=1] x):
         cdef FLOAT_T t = np.dot(self.weights, x)
         return np.sign(t)
@@ -33,24 +33,24 @@ class BaseSCW(object):
         zeta = 1 + np.power(phi, 2)
         return (phi, psi, zeta)
 
-    def calc_confidence(self, np.ndarray[np.float64_t, ndim=1] x, 
+    def calc_confidence(self, np.ndarray[np.float64_t, ndim=1] x,
                         FLOAT_T teacher):
         return np.dot(x, self.covariance*x)
-    
+
     def calc_margin(self, np.ndarray[np.float64_t, ndim=1] x, FLOAT_T teacher):
         return teacher * np.dot(self.weights, x)
-    
+
     def calc_alpha(self, np.ndarray[np.float64_t, ndim=1] x, FLOAT_T teacher):
         #calc in a child class
         pass
 
     def calc_beta(self, np.ndarray[np.float64_t, ndim=1] x, FLOAT_T teacher):
         cdef FLOAT_T phi, psi, zeta
-        cdef FLOAT_T alpha, v, m 
+        cdef FLOAT_T alpha, v, m
 
         alpha = self.calc_alpha(x, teacher)
         v = self.calc_confidence(x, teacher)
-        m = self.calc_margin(x, teacher) 
+        m = self.calc_margin(x, teacher)
         phi, psi, zeta = self.cdf_values
 
         cdef FLOAT_T j, k, u
@@ -59,15 +59,15 @@ class BaseSCW(object):
         u = np.power(j+k, 2) / 4
         return (alpha * phi) / (np.sqrt(u) + v*alpha*phi)
 
-    def update_covariance(self, np.ndarray[np.float64_t, ndim=1] x, 
+    def update_covariance(self, np.ndarray[np.float64_t, ndim=1] x,
                           FLOAT_T teacher):
         cdef FLOAT_T beta
-        cdef np.ndarray[np.float64_t, ndim=1] c
+        cdef np.ndarray[np.float64_t, ndim = 1] c
         beta = self.calc_beta(x, teacher)
         c = self.covariance
-        self.covariance -= beta*c*c*x*x 
+        self.covariance -= beta*c*c*x*x
 
-    def update_weights(self, np.ndarray[np.float64_t, ndim=1] x, 
+    def update_weights(self, np.ndarray[np.float64_t, ndim=1] x,
                        FLOAT_T teacher):
         cdef FLOAT_T alpha
         alpha = self.calc_alpha(x, teacher)
@@ -79,12 +79,12 @@ class BaseSCW(object):
             self.update_weights(x, teacher)
             self.update_covariance(x, teacher)
 
-    def train(self, np.ndarray[np.float64_t, ndim=2] X, 
+    def train(self, np.ndarray[np.float64_t, ndim=2] X,
               np.ndarray[np.float64_t, ndim=1] teachers):
         for x, teacher in zip(X, teachers):
             self.update(x, teacher)
 
-    def fit(self, np.ndarray[np.float64_t, ndim=2] X, 
+    def fit(self, np.ndarray[np.float64_t, ndim=2] X,
             np.ndarray[np.float64_t, ndim=1] teachers, int n_jobs):
         for i in range(n_jobs):
             self.train(X, teachers)
@@ -96,7 +96,7 @@ class BaseSCW(object):
             r = np.dot(x, self.weights)
             rs.append(r)
         return np.array(rs)
-    
+
     def predict(self, np.ndarray[np.float64_t, ndim=2] X):
         labels = []
         for r in self.weighted(X):
@@ -110,9 +110,9 @@ class BaseSCW(object):
 class SCW1(BaseSCW):
     def calc_alpha(self, np.ndarray[np.float64_t, ndim=1] x, FLOAT_T teacher):
         v = self.calc_confidence(x, teacher)
-        m = self.calc_margin(x, teacher) 
+        m = self.calc_margin(x, teacher)
         phi, psi, zeta = self.cdf_values
-        
+
         j = np.power(m, 2) * np.power(phi, 4) / 4
         k = v * zeta * np.power(phi, 2)
         t = (-m*psi + np.sqrt(j+k)) / (v*zeta)
@@ -122,14 +122,14 @@ class SCW1(BaseSCW):
 class SCW2(BaseSCW):
     def calc_alpha(self, np.ndarray[np.float64_t, ndim=1] x, FLOAT_T teacher):
         v = self.calc_confidence(x, teacher)
-        m = self.calc_margin(x, teacher) 
+        m = self.calc_margin(x, teacher)
         phi, psi, zeta = self.cdf_values
-        
+
         n = v+1/self.C
         a = np.power(phi*m*v, 2)
         b = 4*n*v * (n+v*np.power(phi, 2))
         gamma = phi * np.sqrt(a+b)
-        
+
         c = -(2*m*n + m*v*np.power(phi, 2))
         d = np.power(n, 2) + n*v*np.power(phi, 2)
         t = (c+gamma)/(2*d)

@@ -35,7 +35,7 @@ def calc_accuracy(resutls, answers):
 
 X, y = generate_dataset()
 
-N = len(X)*0.8
+N = int(len(X)*0.8)
 training, test = X[:N], X[N:]
 labels, answers = y[:N], y[N:]
 

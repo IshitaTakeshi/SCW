@@ -3,8 +3,7 @@ from __future__ import division
 import time
 
 import numpy as np
-from sklearn.datasets import load_digits, make_classification
-from sklearn.svm import LinearSVC
+from sklearn.datasets import load_digits
 from matplotlib import pyplot
 
 from scw import SCW1

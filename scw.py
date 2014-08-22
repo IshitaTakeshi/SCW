@@ -111,7 +111,7 @@ class SCW2(BaseSCW):
         
         n = v+1/self.C
         a = pow(phi*m*v, 2)
-        b = 4*n*v * (n+v*pow(phi, 2))
+        b = 4*n*v * (n + v*pow(phi, 2))
         gamma = phi * math.sqrt(a+b)
         
         c = -(2*m*n + m*v*pow(phi, 2))

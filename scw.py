@@ -7,7 +7,7 @@ __all__ = ['SCW1', 'SCW2']
 
 
 class BaseSCW(object):
-    def __init__(self, N_DIM, C, ETA):
+    def __init__(self, N_DIM, C=1.0, ETA=1.0):
         self.weights = np.zeros(N_DIM)
         self.covariance = np.ones(N_DIM)
         self.C = np.float64(C)

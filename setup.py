@@ -1,10 +1,9 @@
 import os
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='scw',
     version='1.0',
-    description='Soft Confidence Weighted Learning', 
-    py_modules=['scw'],
+    description='Soft Confidence Weighted Learning',
     author='Ishita Takeshi',
 )

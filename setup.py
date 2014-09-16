@@ -6,6 +6,7 @@ def read(filename):
 
 setup(
     name='scw',
+    py_modules=['scw'],
     version='1.0',
     author='Ishita Takeshi',
     description=("An implementation of " 
@@ -13,6 +14,6 @@ setup(
     license='MIT',
     keywords = "Exact Soft Confidence-Weighted Learning",
     url='https://pypi.python.org/pypi/scw',
-    long_description=read('README.md'),
+    long_description=read('README.txt'),
     author_email='ishitah.takeshi@gmail.com'
 )

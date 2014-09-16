@@ -14,8 +14,8 @@ The paper is [here](http://icml.cc/2012/papers/86.pdf).
 There are 2 kinds of implementations presented in the paper, which served as 
 
 ```
-scw.SCW1(data_dimension, C, ETA)
-scw.SCW2(data_dimension, C, ETA)
+scw.SCW1(C, ETA)
+scw.SCW2(C, ETA)
 ```
 
 in the code. C and ETA are hyperparameters.

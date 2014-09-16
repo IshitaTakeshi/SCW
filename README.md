@@ -25,7 +25,7 @@ in the code. C and ETA are hyperparameters.
 ```
 from scw import SCW1, SCW2
 
-scw = SCW1(len(X[0]), C=1.0, ETA=1.0)
+scw = SCW1(C=1.0, ETA=1.0)
 weights, covariance = scw.fit(training_data, teachers)
 results = scw.perdict(test_data)
 ```

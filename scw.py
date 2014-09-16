@@ -7,9 +7,9 @@ __all__ = ['SCW1', 'SCW2']
 
 
 class BaseSCW(object):
-    def __init__(self, N_DIM, C=1.0, ETA=1.0):
-        self.weights = np.zeros(N_DIM)
-        self.covariance = np.ones(N_DIM)
+    def __init__(self, C=1.0, ETA=1.0):
+        self.weights = None
+        self.covariance = None
         self.C = np.float64(C)
         self.cdf_values = self.calc_cdf_values(ETA)
     
@@ -70,6 +70,10 @@ class BaseSCW(object):
             self.update(x, teacher)
 
     def fit(self, X, teachers, n_jobs=1):
+        n_dim = len(X[0])
+        self.weights = np.zeros(n_dim)
+        self.covariance = np.ones(n_dim)
+
         for i in range(n_jobs):
             self.train(X, teachers)
         return self.weights, self.covariance

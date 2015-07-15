@@ -32,16 +32,21 @@ def calc_accuracy(resutls, answers):
     accuracy = n_correct_answers/len(results)
     return accuracy
 
+
 X, y = generate_dataset()
 
 N = int(len(X)*0.8)
+
 training, test = X[:N], X[N:]
 labels, answers = y[:N], y[N:]
 
 scw = SCW1(C=1.0, ETA=1.0)
+
 t1 = time.time()
 scw.fit(training, labels)
 t2 = time.time()
+
 results = scw.predict(test)
 accuracy = calc_accuracy(results, answers)
+
 print("SCW    time:{:3.6f}    accuracy:{:1.3f}".format(t2-t1, accuracy))

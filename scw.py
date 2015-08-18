@@ -12,6 +12,7 @@ class BaseSCW(object):
         self.covariance = None
         self.C = np.float64(C)
         self.cdf_values = self.calc_cdf_values(ETA)
+        self.has_fitted = False
 
     def sgn(self, x):
         t = np.dot(self.weights, x)
@@ -71,8 +72,10 @@ class BaseSCW(object):
 
     def fit(self, X, labels, n_jobs=1):
         n_dim = len(X[0])
-        self.weights = np.zeros(n_dim)
-        self.covariance = np.ones(n_dim)
+        if not(self.has_fitted):
+            self.weights = np.zeros(n_dim)
+            self.covariance = np.ones(n_dim)
+            self.has_fitted = True
 
         for i in range(n_jobs):
             self.train(X, labels)

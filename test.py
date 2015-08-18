@@ -43,7 +43,8 @@ labels, answers = y[:N], y[N:]
 scw = SCW1(C=1.0, ETA=1.0)
 
 t1 = time.time()
-scw.fit(training, labels)
+for x, y in zip(training, labels):
+    scw.fit(training, labels)
 t2 = time.time()
 
 results = scw.predict(test)

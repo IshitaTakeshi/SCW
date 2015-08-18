@@ -14,10 +14,6 @@ class BaseSCW(object):
         self.cdf_values = self.calc_cdf_values(ETA)
         self.has_fitted = False
 
-    def sgn(self, x):
-        t = np.dot(self.weights, x)
-        return np.sign(t)
-
     def loss(self, x, label):
         t = label * np.dot(self.weights, x)
         if(t >= 1):
@@ -61,7 +57,6 @@ class BaseSCW(object):
         self.weights += alpha*label*self.covariance*x
 
     def update(self, x, label):
-        y = self.sgn(x)
         if(self.loss(x, label) > 0):
             self.update_weights(x, label)
             self.update_covariance(x, label)
@@ -81,16 +76,10 @@ class BaseSCW(object):
             self.train(X, labels)
         return self.weights, self.covariance
 
-    def weighted(self, X):
-        rs = []
-        for x in X:
-            r = np.dot(x, self.weights)
-            rs.append(r)
-        return np.array(rs)
-
     def predict(self, X):
         labels = []
-        for r in self.weighted(X):
+        for x in X:
+            r = np.dot(x, self.weights)
             if(r > 0):
                 labels.append(1)
             else:

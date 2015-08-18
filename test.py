@@ -44,7 +44,7 @@ scw = SCW1(C=1.0, ETA=1.0)
 
 t1 = time.time()
 for x, y in zip(training, labels):
-    scw.fit(training, labels)
+    scw.fit([x], [y])
 t2 = time.time()
 
 results = scw.predict(test)

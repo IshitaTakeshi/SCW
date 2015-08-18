@@ -17,8 +17,8 @@ class BaseSCW(object):
         t = np.dot(self.weights, x)
         return np.sign(t)
 
-    def loss(self, x, teacher):
-        t = teacher * np.dot(self.weights, x)
+    def loss(self, x, label):
+        t = label * np.dot(self.weights, x)
         if(t >= 1):
             return 0
         return 1-t
@@ -29,20 +29,20 @@ class BaseSCW(object):
         zeta = 1 + pow(phi, 2)
         return (phi, psi, zeta)
 
-    def calc_confidence(self, x, teacher):
+    def calc_confidence(self, x, label):
         return np.dot(x, self.covariance*x)
 
-    def calc_margin(self, x, teacher):
-        return teacher*np.dot(self.weights, x)
+    def calc_margin(self, x, label):
+        return label*np.dot(self.weights, x)
 
-    def calc_alpha(self, x, teacher):
+    def calc_alpha(self, x, label):
         # calc in a child class
         pass
 
-    def calc_beta(self, x, teacher):
-        alpha = self.calc_alpha(x, teacher)
-        v = self.calc_confidence(x, teacher)
-        m = self.calc_margin(x, teacher)
+    def calc_beta(self, x, label):
+        alpha = self.calc_alpha(x, label)
+        v = self.calc_confidence(x, label)
+        m = self.calc_margin(x, label)
         phi, psi, zeta = self.cdf_values
 
         j = -alpha * v * phi
@@ -50,32 +50,32 @@ class BaseSCW(object):
         u = pow(j+k, 2) / 4
         return (alpha * phi) / (math.sqrt(u) + v*alpha*phi)
 
-    def update_covariance(self, x, teacher):
-        beta = self.calc_beta(x, teacher)
+    def update_covariance(self, x, label):
+        beta = self.calc_beta(x, label)
         c = self.covariance
         self.covariance -= beta*c*c*x*x
 
-    def update_weights(self, x, teacher):
-        alpha = self.calc_alpha(x, teacher)
-        self.weights += alpha*teacher*self.covariance*x
+    def update_weights(self, x, label):
+        alpha = self.calc_alpha(x, label)
+        self.weights += alpha*label*self.covariance*x
 
-    def update(self, x, teacher):
+    def update(self, x, label):
         y = self.sgn(x)
-        if(self.loss(x, teacher) > 0):
-            self.update_weights(x, teacher)
-            self.update_covariance(x, teacher)
+        if(self.loss(x, label) > 0):
+            self.update_weights(x, label)
+            self.update_covariance(x, label)
 
-    def train(self, X, teachers):
-        for x, teacher in zip(X, teachers):
-            self.update(x, teacher)
+    def train(self, X, labels):
+        for x, label in zip(X, labels):
+            self.update(x, label)
 
-    def fit(self, X, teachers, n_jobs=1):
+    def fit(self, X, labels, n_jobs=1):
         n_dim = len(X[0])
         self.weights = np.zeros(n_dim)
         self.covariance = np.ones(n_dim)
 
         for i in range(n_jobs):
-            self.train(X, teachers)
+            self.train(X, labels)
         return self.weights, self.covariance
 
     def weighted(self, X):
@@ -96,9 +96,9 @@ class BaseSCW(object):
 
 
 class SCW1(BaseSCW):
-    def calc_alpha(self, x, teacher):
-        v = self.calc_confidence(x, teacher)
-        m = self.calc_margin(x, teacher)
+    def calc_alpha(self, x, label):
+        v = self.calc_confidence(x, label)
+        m = self.calc_margin(x, label)
         phi, psi, zeta = self.cdf_values
 
         j = pow(m, 2) * pow(phi, 4) / 4
@@ -108,9 +108,9 @@ class SCW1(BaseSCW):
 
 
 class SCW2(BaseSCW):
-    def calc_alpha(self, x, teacher):
-        v = self.calc_confidence(x, teacher)
-        m = self.calc_margin(x, teacher)
+    def calc_alpha(self, x, label):
+        v = self.calc_confidence(x, label)
+        m = self.calc_margin(x, label)
         phi, psi, zeta = self.cdf_values
 
         n = v+1/self.C

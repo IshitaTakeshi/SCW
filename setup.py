@@ -7,9 +7,9 @@ def read(filename):
 setup(
     name='scw',
     py_modules=['scw'],
-    version='1.0',
+    version='1.1.0',
     author='Ishita Takeshi',
-    description=("An implementation of " 
+    description=("An implementation of "
                  "Exact Soft Confidence-Weighted Learning"),
     license='MIT',
     keywords = "Exact Soft Confidence-Weighted Learning",

@@ -65,16 +65,15 @@ class BaseSCW(object):
         for x, label in zip(X, labels):
             self.update(x, label)
 
-    def fit(self, X, labels, n_jobs=1):
+    def fit(self, X, labels):
         n_dim = len(X[0])
         if not(self.has_fitted):
             self.weights = np.zeros(n_dim)
             self.covariance = np.ones(n_dim)
             self.has_fitted = True
 
-        for i in range(n_jobs):
-            self.train(X, labels)
-        return self.weights, self.covariance
+        self.train(X, labels)
+        return self
 
     def predict(self, X):
         labels = []

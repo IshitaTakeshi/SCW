@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.datasets import load_digits
 from matplotlib import pyplot
 
-from scw import SCW1
+from scw import SCW1, SCW2
 
 
 def generate_dataset():
@@ -24,7 +24,7 @@ def generate_dataset():
     return digits.data, y
 
 
-def calc_accuracy(resutls, answers):
+def calc_accuracy(results, answers):
     n_correct_answers = 0
     for result, answer in zip(results, answers):
         if(result == answer):
@@ -33,21 +33,37 @@ def calc_accuracy(resutls, answers):
     return accuracy
 
 
-X, y = generate_dataset()
+def test_scw(scw, training, test):
+    t1 = time.time()
+    for x, y in zip(*training):
+        scw.fit([x], [y])
+    t2 = time.time()
 
+    samples, labels = test
+
+    t3 = time.time()
+    results = scw.predict(samples)
+    t4 = time.time()
+
+    accuracy = calc_accuracy(results, labels)
+
+    assert(accuracy == 1.0)
+
+    print("fitting time    : {:3.6f}\n"
+          "predicting time : {:3.6f}\n"
+          "accuracy        : {:1.3f}\n".format(t2-t1, t4-t3, accuracy))
+
+
+
+X, y = generate_dataset()
 N = int(len(X)*0.8)
 
-training, test = X[:N], X[N:]
-labels, answers = y[:N], y[N:]
+training = (X[:N], y[:N])
+test = (X[N:], y[N:])
 
-scw = SCW1(C=1.0, ETA=1.0)
+print("SCW1")
+test_scw(SCW1(C=1.0, ETA=1.0), training, test)
 
-t1 = time.time()
-for x, y in zip(training, labels):
-    scw.fit([x], [y])
-t2 = time.time()
-
-results = scw.predict(test)
-accuracy = calc_accuracy(results, answers)
-
-print("SCW    time:{:3.6f}    accuracy:{:1.3f}".format(t2-t1, accuracy))
+print("")
+print("SCW2")
+test_scw(SCW2(C=1.0, ETA=1.0), training, test)

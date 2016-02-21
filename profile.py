@@ -16,20 +16,23 @@ def generate_dataset():
     return training, test
 
 
-def profile(model, training, test):
+def profile(model, model_name, training, test):
+    print("Model: {}".format(model_name))
+
     X, y = training
 
     t1 = time.time()
     model.fit(X, y)
     t2 = time.time()
-    print("spent time for training :  {}".format(t2-t1))
+    print("    Spent time for training :  {}".format(t2-t1))
 
     X, y_true = test
     y_pred = model.predict(X)
     accuracy = accuracy_score(y_pred, y_true)
-    print("accuracy :  {}".format(accuracy))
+    print("    Accuracy :  {}\n".format(accuracy))
 
 
 training, test = generate_dataset()
-profile(SCW1(), training, test)
-profile(LinearSVC(), training, test)
+
+profile(SCW1(), "SCW1", training, test)
+profile(LinearSVC(), "LinearSVC", training, test)

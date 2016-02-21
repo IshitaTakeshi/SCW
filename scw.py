@@ -1,6 +1,7 @@
 import math
 
 import numpy as np
+from numpy import matlib
 from scipy.stats import norm
 
 __all__ = ['SCW1', 'SCW2']
@@ -15,7 +16,7 @@ class BaseSCW(object):
         self.has_fitted = False
 
     def loss(self, x, label):
-        t = label * np.dot(self.weights, x)
+        t = label * self.weights.T*x
         if(t >= 1):
             return 0
         return 1-t
@@ -27,10 +28,12 @@ class BaseSCW(object):
         return (phi, psi, zeta)
 
     def calc_confidence(self, x):
-        return np.dot(x, self.covariance*x)
+        c = x.T*self.covariance*x
+        return c.item(0)  # get a scalar value
 
     def calc_margin(self, x, label):
-        return label*np.dot(self.weights, x)
+        y = self.weights.T*x
+        return label*y.item(0)
 
     def calc_alpha(self, x, label):
         # calc in a child class
@@ -50,7 +53,7 @@ class BaseSCW(object):
     def update_covariance(self, x, label):
         beta = self.calc_beta(x, label)
         c = self.covariance
-        self.covariance -= beta*c*c*x*x
+        self.covariance -= beta*c.T*x*x.T*c
 
     def update_weights(self, x, label):
         alpha = self.calc_alpha(x, label)
@@ -61,18 +64,21 @@ class BaseSCW(object):
             self.update_weights(x, label)
             self.update_covariance(x, label)
 
-    def train(self, X, labels):
+    def fit_(self, X, labels):
         for x, label in zip(X, labels):
+            x = x.T  # regard x as a vector
             self.update(x, label)
 
     def fit(self, X, labels):
-        n_dim = len(X[0])
+        X = matlib.matrix(X)
+        n_dim = X.shape[1]
+        assert(np.ndim(X) == 2)
         if not(self.has_fitted):
-            self.weights = np.zeros(n_dim)
-            self.covariance = np.ones(n_dim)
+            self.weights = np.matlib.zeros((n_dim, 1))
+            self.covariance = matlib.eye(n_dim)
             self.has_fitted = True
 
-        self.train(X, labels)
+        self.fit_(X, labels)
         return self
 
     def predict(self, X):

@@ -35,6 +35,7 @@ def calc_accuracy(results, answers):
 
 def test_scw(scw, training, test):
     t1 = time.time()
+    # online fitting
     for x, y in zip(*training):
         scw.fit([x], [y])
     t2 = time.time()

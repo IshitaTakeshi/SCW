@@ -110,7 +110,7 @@ class SCW2(BaseSCW):
         m = self.calc_margin(x, label)
         phi, psi, zeta = self.cdf_values
 
-        n = v+1/self.C
+        n = v + 1/(2*self.C)
         a = pow(phi*m*v, 2)
         b = 4*n*v * (n + v*pow(phi, 2))
         gamma = phi * math.sqrt(a+b)

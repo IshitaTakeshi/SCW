@@ -1,0 +1,11 @@
+.pypirc
+__pycache__
+*.pyc
+
+dist
+build
+scw.egg-info
+
+*.swp
+
+*.def

@@ -26,7 +26,7 @@ class BaseSCW(object):
         zeta = 1 + pow(phi, 2)
         return (phi, psi, zeta)
 
-    def calc_confidence(self, x, label):
+    def calc_confidence(self, x):
         return np.dot(x, self.covariance*x)
 
     def calc_margin(self, x, label):
@@ -38,7 +38,7 @@ class BaseSCW(object):
 
     def calc_beta(self, x, label):
         alpha = self.calc_alpha(x, label)
-        v = self.calc_confidence(x, label)
+        v = self.calc_confidence(x)
         m = self.calc_margin(x, label)
         phi, psi, zeta = self.cdf_values
 
@@ -88,7 +88,7 @@ class BaseSCW(object):
 
 class SCW1(BaseSCW):
     def calc_alpha(self, x, label):
-        v = self.calc_confidence(x, label)
+        v = self.calc_confidence(x)
         m = self.calc_margin(x, label)
         phi, psi, zeta = self.cdf_values
 
@@ -100,7 +100,7 @@ class SCW1(BaseSCW):
 
 class SCW2(BaseSCW):
     def calc_alpha(self, x, label):
-        v = self.calc_confidence(x, label)
+        v = self.calc_confidence(x)
         m = self.calc_margin(x, label)
         phi, psi, zeta = self.cdf_values
 

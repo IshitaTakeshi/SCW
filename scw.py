@@ -1,7 +1,6 @@
 import math
 
 import numpy as np
-from numpy import matlib
 from scipy.stats import norm
 
 __all__ = ['SCW1', 'SCW2']
@@ -16,10 +15,8 @@ class BaseSCW(object):
         self.has_fitted = False
 
     def loss(self, x, label):
-        t = label * self.weights.T*x
-        if t >= 1:
-            return 0
-        return 1-t
+        t = self.calc_margin(x, label)
+        return 0 if t >= 1 else 1-t
 
     def calc_cdf_values(self, ETA):
         phi = norm.cdf(ETA)
@@ -28,12 +25,10 @@ class BaseSCW(object):
         return (phi, psi, zeta)
 
     def calc_confidence(self, x):
-        c = x.T*self.covariance*x
-        return c.item(0)  # get a scalar value
+        return np.dot(np.dot(x.T, self.covariance), x)
 
     def calc_margin(self, x, label):
-        y = self.weights.T*x
-        return label*y.item(0)
+        return label * np.dot(self.weights.T, x)
 
     def calc_alpha(self, x, label):
         # calc in a child class
@@ -53,11 +48,12 @@ class BaseSCW(object):
     def update_covariance(self, x, label):
         beta = self.calc_beta(x, label)
         c = self.covariance
-        self.covariance -= beta*c.T*x*x.T*c
+        m = np.dot(x, x.T)
+        self.covariance -= beta * np.dot(np.dot(c.T, m), c)
 
     def update_weights(self, x, label):
         alpha = self.calc_alpha(x, label)
-        self.weights += alpha*label*self.covariance*x
+        self.weights += alpha*label*np.dot(self.covariance, x)
 
     def update(self, x, label):
         if label != 1 and label != -1:
@@ -69,19 +65,17 @@ class BaseSCW(object):
 
     def fit_(self, X, labels):
         for x, label in zip(X, labels):
-            x = x.T  # regard x as a vector
+            x = x.reshape(-1, 1)  # regard x as a vector
             self.update(x, label)
 
     def fit(self, X, labels):
-        X = matlib.matrix(X)
-
-        n_dim = X.shape[1]
         if np.ndim(X) != 2:
             raise ValueError("Estimator expencs 2 dim array.")
 
+        ndim = len(X[0])
         if not self.has_fitted:
-            self.weights = np.matlib.zeros((n_dim, 1))
-            self.covariance = matlib.eye(n_dim)
+            self.weights = np.zeros((ndim, 1))
+            self.covariance = np.eye(ndim)
             self.has_fitted = True
 
         self.fit_(X, labels)

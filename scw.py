@@ -17,7 +17,7 @@ class BaseSCW(object):
 
     def loss(self, x, label):
         t = label * self.weights.T*x
-        if(t >= 1):
+        if t >= 1:
             return 0
         return 1-t
 
@@ -60,7 +60,10 @@ class BaseSCW(object):
         self.weights += alpha*label*self.covariance*x
 
     def update(self, x, label):
-        if(self.loss(x, label) > 0):
+        if label != 1 and label != -1:
+            raise ValueError("Data label must be 1 or -1.")
+
+        if self.loss(x, label) > 0:
             self.update_weights(x, label)
             self.update_covariance(x, label)
 
@@ -71,9 +74,12 @@ class BaseSCW(object):
 
     def fit(self, X, labels):
         X = matlib.matrix(X)
+
         n_dim = X.shape[1]
-        assert(np.ndim(X) == 2)
-        if not(self.has_fitted):
+        if np.ndim(X) != 2:
+            raise ValueError("Estimator expencs 2 dim array.")
+
+        if not self.has_fitted:
             self.weights = np.matlib.zeros((n_dim, 1))
             self.covariance = matlib.eye(n_dim)
             self.has_fitted = True
@@ -85,7 +91,7 @@ class BaseSCW(object):
         labels = []
         for x in X:
             r = np.dot(x, self.weights)
-            if(r > 0):
+            if r > 0:
                 labels.append(1)
             else:
                 labels.append(-1)

@@ -4,20 +4,13 @@ import time
 import unittest
 
 import numpy as np
-from sklearn.datasets import load_digits
 from sklearn.metrics import accuracy_score
 from sklearn.cross_validation import cross_val_score
 from matplotlib import pyplot
 
+import datasets
 import utils
 from scw import SCW1, SCW2
-
-
-def generate_dataset():
-    digits = load_digits(2)
-    y = np.array(digits.target, copy=True)
-    y = utils.overwrite_labels(y)
-    return digits.data, y
 
 
 def cross_validation(scw, training, test):
@@ -32,9 +25,8 @@ def cross_validation(scw, training, test):
 
 class TestAccuracy(unittest.TestCase):
     def test_accuracy(self):
-        X, y = generate_dataset()  #linear separable
-        N = int(len(X)*0.8)
-
+        X, y = datasets.load_digits()  #linear separable
+        N = int(len(y)*0.8)
         training = X[:N], y[:N]
         test = X[N:], y[N:]
 

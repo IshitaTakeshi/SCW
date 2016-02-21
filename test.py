@@ -13,14 +13,9 @@ def generate_dataset():
     digits = load_digits(2)
 
     classes = np.unique(digits.target)
-    y = []
-    for target in digits.target:
-        if(target == classes[0]):
-            y.append(-1)
-        if(target == classes[1]):
-            y.append(1)
-    y = np.array(y)
-
+    y = np.array(digits.target, copy=True)
+    y[y==classes[0]] = -1
+    y[y==classes[1]] = 1
     return digits.data, y
 
 

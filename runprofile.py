@@ -31,7 +31,8 @@ def accuracy_and_time(model, model_name, training, test):
 
 def run_profile(model, model_name, X, y):
     filename = model_name+".def"
-    profile.runctx("model.fit(X, y)", globals(), locals(), filename)
+    profile.runctx("for i in range(100): model.fit(X, y)",
+                   globals(), locals(), filename)
 
     #p = pstats.Stats(filename)
     #p.print_stats()

@@ -32,7 +32,7 @@ results = scw.perdict(X)
 ```
 
 `X` and `y` are 2-dimensional and 1-dimensional array respectively.  
-`X` is a set of data vectors which each row represents a feature vector.  
+`X` is a set of data vectors. Each row of `X` represents a feature vector.  
 `y` is a set of labels corresponding with `X`.  
 
 ## Note

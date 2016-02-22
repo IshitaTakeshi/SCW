@@ -2,7 +2,7 @@
 
 ##The explanation of the algorithm
 This is an online supervised learning algorithm.  
-This learning method enjoys all the four salient properties:
+This learning method utilizes all the four salient properties:
 
 * Large margin training
 * Confidence weighting

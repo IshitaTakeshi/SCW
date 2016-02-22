@@ -70,7 +70,7 @@ class BaseSCW(object):
 
     def fit(self, X, labels):
         if np.ndim(X) != 2:
-            raise ValueError("Estimator expencs 2 dim array.")
+            raise ValueError("Estimator expects 2 dim array.")
 
         ndim = len(X[0])
         if not self.has_fitted:

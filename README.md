@@ -27,8 +27,8 @@ C and ETA are hyperparameters.
 from scw import SCW1, SCW2
 
 scw = SCW1(C=1.0, ETA=1.0)
-weights, covariance = scw.fit(X, y)
-results = scw.perdict(X)
+scw.fit(X, y)
+y_pred = scw.perdict(X)
 ```
 
 `X` and `y` are 2-dimensional and 1-dimensional array respectively.  

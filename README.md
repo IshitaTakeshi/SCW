@@ -1,24 +1,25 @@
-#Exact Soft Confidence-Weighted Learning
+Exact Soft Confidence-Weighted Learning
+=======================================
 
-##The explanation of the algorithm
-This is an online supervised learning algorithm.  
-This learning method utilizes all the four salient properties:
+##The algorithm
+This is an online supervised learning algorithm which utilizes all the four salient properties:
 
 * Large margin training
 * Confidence weighting
 * Capability to handle non-separable data
-* Adaptive margin 
+* Adaptive margin
 
 The paper is [here](http://icml.cc/2012/papers/86.pdf).
 
-There are 2 kinds of implementations presented in the paper, which served as 
+SCW has 2 formulations of its algorithm which are SCW-I and SCW-II.
+They can be accessed like below.
 
 ```
 scw.SCW1(C, ETA)
 scw.SCW2(C, ETA)
 ```
 
-in the code. C and ETA are hyperparameters.
+C and ETA are hyperparameters.
 
 ##Usage
 
@@ -30,6 +31,10 @@ weights, covariance = scw.fit(X, y)
 results = scw.perdict(X)
 ```
 
-`y` and `X` are an 1-dimensional and 2-dimensional array respectively.
+`X` and `y` are 2-dimensional and 1-dimensional array respectively.
 `X` is a set of data vectors which each row represents a feature vector. 
 `y` is a set of labels corresponding with `X`.
+
+## Note
+1. This package performs only binary classification, not multiclass classification.
+2. Training labels must be 1 or -1. No other labels allowed.

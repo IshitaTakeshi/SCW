@@ -25,10 +25,10 @@ class BaseSCW(object):
         return (phi, psi, zeta)
 
     def calc_confidence(self, x):
-        return np.dot(np.dot(x.T, self.covariance), x)
+        return np.dot(x.T, np.dot(self.covariance, x)).item(0)
 
     def calc_margin(self, x, label):
-        return label * np.dot(self.weights.T, x)
+        return label * np.dot(self.weights.T, x).item(0)
 
     def calc_alpha(self, x, label):
         # calc in a child class
@@ -49,7 +49,7 @@ class BaseSCW(object):
         beta = self.calc_beta(x, label)
         c = self.covariance
         m = np.dot(x, x.T)
-        self.covariance -= beta * np.dot(np.dot(c.T, m), c)
+        self.covariance -= beta * np.dot(np.dot(c, m), c)
 
     def update_weights(self, x, label):
         alpha = self.calc_alpha(x, label)
@@ -84,8 +84,8 @@ class BaseSCW(object):
     def predict(self, X):
         labels = []
         for x in X:
-            r = np.dot(x, self.weights)
-            if r > 0:
+            y = np.dot(x, self.weights)
+            if y > 0:
                 labels.append(1)
             else:
                 labels.append(-1)

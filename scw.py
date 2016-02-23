@@ -40,10 +40,10 @@ class BaseSCW(object):
         m = self.calc_margin(x, label)
         phi, psi, zeta = self.cdf_values
 
-        j = -alpha * v * phi
-        k = math.sqrt(pow(alpha*v*phi, 2) + 4*v)
-        u = pow(j+k, 2) / 4
-        return (alpha * phi) / (math.sqrt(u) + v*alpha*phi)
+        j = alpha * v * phi
+        k = math.sqrt(pow(j, 2) + 4*v)
+        u = pow(-j+k, 2) / 4
+        return (alpha * phi) / (math.sqrt(u) + j)
 
     def update_covariance(self, x, label):
         beta = self.calc_beta(x, label)
@@ -98,8 +98,10 @@ class SCW1(BaseSCW):
         m = self.calc_margin(x, label)
         phi, psi, zeta = self.cdf_values
 
-        j = pow(m, 2) * pow(phi, 4) / 4
-        k = v * zeta * pow(phi, 2)
+        phi2 = pow(phi, 2)
+
+        j = pow(m*phi2, 2) / 4  #m^2 * phi^4 / 4
+        k = v * zeta * phi2
         t = (-m*psi + math.sqrt(j+k)) / (v*zeta)
         return min(self.C, max(0, t))
 
@@ -110,12 +112,14 @@ class SCW2(BaseSCW):
         m = self.calc_margin(x, label)
         phi, psi, zeta = self.cdf_values
 
-        n = v + 1/(2*self.C)
-        a = pow(phi*m*v, 2)
-        b = 4*n*v * (n + v*pow(phi, 2))
-        gamma = phi * math.sqrt(a+b)
+        phi2 = pow(phi, 2)
 
-        c = -(2*m*n + m*v*pow(phi, 2))
-        d = pow(n, 2) + n*v*pow(phi, 2)
+        n = v + 1/(2*self.C)
+        j = phi2 * pow(m*v, 2)
+        k = 4*n*v * (n + v*phi2)
+        gamma = phi * math.sqrt(j+k)
+
+        c = -(2*m*n + m*v*phi2)
+        d = pow(n, 2) + n*v*phi2
         t = (c+gamma)/(2*d)
         return max(0, t)

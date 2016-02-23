@@ -39,12 +39,14 @@ def run_profile(model, model_name, X, y):
 
 
 
-X, y = datasets.make_classification()
-training, test = utils.train_test_split(X, y)
+training, test = datasets.load_mnist()
+#X, y = datasets.make_classification()
+#training, test = utils.train_test_split(X, y)
 accuracy_and_time(SCW1(), "SCW1", training, test)
 accuracy_and_time(SCW2(), "SCW2", training, test)
 accuracy_and_time(LinearSVC(), "LinearSVC", training, test)
 
-X, y = datasets.load_digits()
+#training, test = datasets.load_mnist()
+X, y = training
 run_profile(SCW1(), "SCW1", X, y)
 run_profile(SCW2(), "SCW2", X, y)

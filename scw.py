@@ -69,11 +69,13 @@ class BaseSCW(object):
             self.update(x, label)
 
     def fit(self, X, labels):
+        X = np.array(X)
+
         if np.ndim(X) != 2:
             raise ValueError("Estimator expects 2 dim array.")
 
-        ndim = len(X[0])
         if not self.has_fitted:
+            ndim = X.shape[1]
             self.weights = np.zeros((ndim, 1))
             self.covariance = np.eye(ndim)
             self.has_fitted = True

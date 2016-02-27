@@ -22,11 +22,12 @@ scw.SCW2(C, ETA)
 C and ETA are hyperparameters.
 
 ## Installation
-### Dependent packages
+Dependent packages
+
 * numpy
 * scipy
 
-### Install via pip
+Install via pip
 ```
 pip3 install scw
 ```

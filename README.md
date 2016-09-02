@@ -33,6 +33,7 @@ pip3 install scw
 ```
 
 ##Usage
+The interface is almost same as the classification models in scikit-learn (e.g. [LinearSVC](http://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html))  
 
 ```
 from scw import SCW1, SCW2
